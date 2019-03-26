@@ -1,5 +1,5 @@
-use hyper::Error as HyperError;
 use failure::{Compat, Fail};
+use hyper::Error as HyperError;
 
 pub type StdBusyError = Compat<BusyError>;
 

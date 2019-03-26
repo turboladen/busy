@@ -1,9 +1,12 @@
-use crate::{configuration::Configuration, busy_error::StdBusyError};
+use crate::{busy_error::StdBusyError, configuration::Configuration};
 use futures::Future;
-use hyper::{Body, Request, Response, Server, service::service_fn};
+use hyper::{service::service_fn, Body, Request, Response, Server};
 
 pub trait Application {
-    fn start() where Self: 'static {
+    fn start()
+    where
+        Self: 'static,
+    {
         let config = Self::build_configuration();
         dbg!(&config);
 
@@ -18,5 +21,7 @@ pub trait Application {
         Configuration::try_new().expect("Unable to fetch configuration")
     }
 
-    fn route(request: Request<Body>) -> Box<Future<Item=Response<Body>, Error=StdBusyError> + Send>;
+    fn route(
+        request: Request<Body>,
+    ) -> Box<Future<Item = Response<Body>, Error = StdBusyError> + Send>;
 }
