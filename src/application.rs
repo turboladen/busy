@@ -1,28 +1,22 @@
-use crate::configuration::Configuration;
+use crate::{configuration::Configuration, busy_error::StdBusyError};
 use futures::Future;
-use hyper::{Body, Response, Server, service::service_fn_ok};
+use hyper::{Body, Request, Response, Server, service::service_fn};
 
 pub trait Application {
-    fn start() {
+    fn start() where Self: 'static {
         let config = Self::build_configuration();
         dbg!(&config);
 
-        // And a NewService to handle each connection...
-        let new_service = || {
-            service_fn_ok(|_req| {
-                Response::new(Body::from("Hello World"))
-            })
-        };
-
         let server = Server::bind(&config.host)
-            .serve(new_service);
+            .serve(|| service_fn(Self::route))
+            .map_err(|e| eprintln!("server error: {}", e));
 
-        hyper::rt::run(server.map_err(|e| {
-            eprintln!("server error: {}", e);
-        }));
+        hyper::rt::run(server);
     }
 
     fn build_configuration() -> Configuration {
         Configuration::try_new().expect("Unable to fetch configuration")
     }
+
+    fn route(request: Request<Body>) -> Box<Future<Item=Response<Body>, Error=StdBusyError> + Send>;
 }

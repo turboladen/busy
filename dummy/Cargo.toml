@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 busy = { path = ".." }
+hyper = "0.12"
+futures = "0.1"

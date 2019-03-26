@@ -1,7 +1,15 @@
 mod application;
+pub mod busy_error;
 mod configuration;
 
 pub use application::Application;
+pub use busy_error::BusyError;
+
+pub type BusyResponse = hyper::Response<hyper::Body>;
+pub type BusyRequest = hyper::Request<hyper::Body>;
+
+pub use hyper::Method as BusyMethod;
+pub use hyper::StatusCode;
 
 #[cfg(test)]
 mod tests {
