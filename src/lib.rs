@@ -1,6 +1,7 @@
 mod application;
 pub mod busy_error;
 mod configuration;
+pub mod routing;
 
 pub use application::Application;
 pub use busy_error::BusyError;
