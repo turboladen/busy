@@ -1,5 +1,5 @@
 use busy::{
-    busy_error::StdBusyError, HyperApplication, BusyMethod, BusyRequest, BusyResponse, StatusCode,
+    busy_error::StdBusyError, HyperApplication, BusyMethod, BusyResponse, StatusCode,
     connection::Connection,
 };
 use futures::{future, Future};
@@ -12,7 +12,7 @@ struct DummyApp;
 
 impl HyperApplication for DummyApp {
     fn route(
-        connection: Connection<BusyRequest>,
+        connection: Connection,
     ) -> Box<Future<Item = BusyResponse, Error = StdBusyError> + Send> {
         let request = connection.request();
 

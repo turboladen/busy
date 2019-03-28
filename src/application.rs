@@ -25,6 +25,6 @@ pub trait HyperApplication {
     }
 
     fn route(
-        connection: Connection<Request<Body>>,
+        connection: Connection,
     ) -> Box<Future<Item = Response<Body>, Error = StdBusyError> + Send>;
 }
