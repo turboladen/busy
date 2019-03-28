@@ -5,6 +5,7 @@ authors = ["Steve Loveless <steve.loveless@gmail.com"]
 edition = "2018"
 
 [dependencies]
+busy-conveyor = { path = "conveyor" }
 config = "0.9"
 failure = "0.1"
 futures = "0.1"
@@ -12,4 +13,4 @@ hyper = "0.12"
 serde = { version = "1.0", features = ["derive"] }
 
 [workspace]
-members = ["dummy"]
+members = ["conveyor", "dummy"]

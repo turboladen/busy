@@ -1,0 +1,10 @@
+[package]
+name = "busy-conveyor"
+version = "0.1.0"
+authors = ["Steve Loveless <steve.loveless@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+failure = "0.1"
+futures = "0.1"
+hyper = "0.12"

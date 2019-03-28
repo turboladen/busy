@@ -1,7 +1,7 @@
 mod application;
 pub mod busy_error;
 mod configuration;
-pub mod connection;
+pub mod stations;
 
 pub use application::HyperApplication;
 pub use busy_error::BusyError;
@@ -11,6 +11,8 @@ pub type BusyRequest = hyper::Request<hyper::Body>;
 
 pub use hyper::Method as BusyMethod;
 pub use hyper::StatusCode;
+
+pub use busy_conveyor as conveyor;
 
 #[cfg(test)]
 mod tests {

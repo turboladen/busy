@@ -1,4 +1,5 @@
-use crate::{busy_error::StdBusyError, configuration::Configuration, connection::Connection};
+use busy_conveyor::{connection::Connection, station::Station};
+use crate::{busy_error::StdBusyError, configuration::Configuration};
 use futures::Future;
 use hyper::{service::service_fn, Body, Request, Response, Server};
 
@@ -13,6 +14,8 @@ pub trait HyperApplication {
         let server = Server::bind(&config.host)
             .serve(|| service_fn(|req: Request<Body>| {
                 let connection = Connection::new(req);
+                let logger = crate::stations::logger::Logger;
+                let connection = logger.operate(connection);
                 Self::route(connection)
             }))
             .map_err(|e| eprintln!("server error: {}", e));
