@@ -1,4 +1,4 @@
-pub use hyper::{Request, Body};
+pub use hyper::{Body, Request};
 
 pub struct Connection {
     request: Request<Body>,
@@ -6,9 +6,7 @@ pub struct Connection {
 
 impl Connection {
     pub fn new(request: Request<Body>) -> Self {
-        Self {
-            request
-        }
+        Self { request }
     }
 
     pub fn request(&self) -> &Request<Body> {

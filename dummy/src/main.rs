@@ -1,6 +1,6 @@
 use busy::{
-    busy_error::StdBusyError, HyperApplication, BusyMethod, BusyResponse, StatusCode,
-    conveyor::connection::Connection,
+    busy_error::StdBusyError, conveyor::connection::Connection, BusyMethod, BusyResponse,
+    HyperApplication, StatusCode,
 };
 use futures::{future, Future};
 // This needs to go away
