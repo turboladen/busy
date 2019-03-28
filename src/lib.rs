@@ -1,8 +1,9 @@
 mod application;
 pub mod busy_error;
 mod configuration;
+pub mod connection;
 
-pub use application::Application;
+pub use application::HyperApplication;
 pub use busy_error::BusyError;
 
 pub type BusyResponse = hyper::Response<hyper::Body>;

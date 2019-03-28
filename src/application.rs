@@ -1,8 +1,8 @@
-use crate::{busy_error::StdBusyError, configuration::Configuration};
+use crate::{busy_error::StdBusyError, configuration::Configuration, connection::Connection};
 use futures::Future;
 use hyper::{service::service_fn, Body, Request, Response, Server};
 
-pub trait Application {
+pub trait HyperApplication {
     fn start()
     where
         Self: 'static,
@@ -11,7 +11,10 @@ pub trait Application {
         dbg!(&config);
 
         let server = Server::bind(&config.host)
-            .serve(|| service_fn(Self::route))
+            .serve(|| service_fn(|req: Request<Body>| {
+                let connection = Connection::new(req);
+                Self::route(connection)
+            }))
             .map_err(|e| eprintln!("server error: {}", e));
 
         hyper::rt::run(server);
@@ -22,6 +25,6 @@ pub trait Application {
     }
 
     fn route(
-        request: Request<Body>,
+        connection: Connection<Request<Body>>,
     ) -> Box<Future<Item = Response<Body>, Error = StdBusyError> + Send>;
 }
