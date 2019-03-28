@@ -1,10 +1,47 @@
 use config::{Config, ConfigError, Environment, File};
 use serde::Deserialize;
-use std::{env, net::SocketAddr};
+use std::{env, fmt, net::SocketAddr};
+
+#[derive(Deserialize, Debug, Clone, Copy)]
+pub enum LogLevel {
+    #[serde(rename = "none")]
+    None,
+
+    #[serde(rename = "error")]
+    Error,
+
+    #[serde(rename = "warn")]
+    Warn,
+
+    #[serde(rename = "info")]
+    Info,
+
+    #[serde(rename = "debug")]
+    Debug,
+
+    #[serde(rename = "trace")]
+    Trace,
+}
+
+impl fmt::Display for LogLevel {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let s = match self {
+            LogLevel::None => "none",
+            LogLevel::Error => "error",
+            LogLevel::Warn => "warn",
+            LogLevel::Info => "info",
+            LogLevel::Debug => "debug",
+            LogLevel::Trace => "trace",
+        };
+
+        write!(f, "{}", s)
+    }
+}
 
 #[derive(Deserialize, Debug)]
 pub struct Configuration {
     pub host: SocketAddr,
+    pub log_level: LogLevel,
 }
 
 impl Configuration {
@@ -34,12 +71,14 @@ impl Configuration {
         // Now that we're done, let's access our configuration
         let host_ip = c.get_str("host.ip")?;
         let host_port = c.get_int("host.port")?;
+        let log_level = c.get("log.level")?;
 
         // You can deserialize (and thus freeze) the entire configuration as
         // c.try_into()
 
         let config = Configuration {
             host: build_host_addr(&host_ip, host_port),
+            log_level,
         };
 
         Ok(config)

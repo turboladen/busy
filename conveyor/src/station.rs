@@ -7,5 +7,5 @@ pub trait Station {
 }
 
 pub trait FinalStation {
-    fn operation(self, connection: Connection) -> Box<Future<Item = Response<Body>, Error = StdError> + Send>;
+    fn operate(self, connection: Connection) -> Box<Future<Item = Response<Body>, Error = StdError> + Send>;
 }
