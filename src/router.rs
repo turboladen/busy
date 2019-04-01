@@ -4,10 +4,11 @@ use futures::{future, Future};
 use hyper::{Method, StatusCode};
 use std::collections::HashMap;
 
+pub type EasyRoute = Box<Future<Item = Connection, Error = StdBusyError> + Send>;
+
 pub type Params = HashMap<String, String>;
 
-pub type Action =
-    fn(Connection, Option<Params>) -> Box<Future<Item = Connection, Error = StdBusyError> + Send>;
+pub type Action = fn(Connection, Option<Params>) -> EasyRoute;
 
 pub struct Route {
     method: Method,
@@ -33,7 +34,7 @@ impl Router {
     pub fn route(
         &self,
         connection: Connection,
-    ) -> Box<Future<Item = Connection, Error = StdBusyError> + Send> {
+    ) -> EasyRoute {
         let request = connection.request();
 
         for route in &self.routes {
