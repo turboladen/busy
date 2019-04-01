@@ -1,6 +1,6 @@
 use failure::{Compat, Fail};
-use hyper::Error as HyperError;
 use http::Error as HttpError;
+use hyper::Error as HyperError;
 
 pub type StdError = Compat<Error>;
 

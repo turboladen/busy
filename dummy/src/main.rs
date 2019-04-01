@@ -1,7 +1,9 @@
 use busy::{
     busy_error::StdBusyError,
-    conveyor::connection::Connection, BusyMethod,
-    HyperApplication, router::{Params, Router}, controller::text,
+    controller::text,
+    conveyor::connection::Connection,
+    router::{Params, Router},
+    BusyMethod, HyperApplication,
 };
 // This needs to go away
 use futures::Future;
@@ -14,16 +16,17 @@ struct DummyApp;
 impl HyperApplication for DummyApp {
     type RouteResult = Box<Future<Item = Connection, Error = StdBusyError> + Send>;
 
-    fn route(
-        connection: Connection,
-    ) -> Self::RouteResult {
+    fn route(connection: Connection) -> Self::RouteResult {
         Router::new()
             .add_route(BusyMethod::GET, "/", home)
             .route(connection)
     }
 }
 
-fn home(connection: Connection, _params: Option<Params>) -> Box<Future<Item = Connection, Error = StdBusyError> + Send> {
+fn home(
+    connection: Connection,
+    _params: Option<Params>,
+) -> Box<Future<Item = Connection, Error = StdBusyError> + Send> {
     text(connection, Body::from(TEMPLATE))
 }
 
