@@ -20,15 +20,11 @@ pub struct Router {
 }
 
 impl Router {
-    pub fn new() -> Self {
-        Self { routes: vec![] }
-    }
-
     pub fn add_route<'a>(&'a mut self, method: Method, path: &str, action: Action) -> &'a Self {
         let route = Route {
             method,
+            action,
             path: path.to_string(),
-            action: action,
         };
         self.routes.push(route);
         self
@@ -55,5 +51,11 @@ impl Router {
             .status(StatusCode::NOT_FOUND);
 
         Box::new(future::ok(Connection { ..temp_connection }))
+    }
+}
+
+impl Default for Router {
+    fn default() -> Self {
+        Self { routes: vec![] }
     }
 }

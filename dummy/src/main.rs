@@ -17,7 +17,7 @@ impl HyperApplication for DummyApp {
     type RouteResult = Box<Future<Item = Connection, Error = StdBusyError> + Send>;
 
     fn route(connection: Connection) -> Self::RouteResult {
-        Router::new()
+        Router::default()
             .add_route(BusyMethod::GET, "/", home)
             .route(connection)
     }

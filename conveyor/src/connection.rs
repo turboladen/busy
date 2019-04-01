@@ -25,14 +25,13 @@ impl Connection {
         &self.request
     }
 
-    pub fn query_params<'a>(&self) -> Option<HashMap<String, String>> {
+    pub fn query_params(&self) -> Option<HashMap<String, String>> {
         let request_uri = self.request.uri().to_string();
 
         let url = Url::parse(&request_uri).ok()?;
 
         let hash = url
             .query_pairs()
-            .into_iter()
             .fold(HashMap::new(), |mut acc, (k, v)| {
                 acc.insert(k.into_owned(), v.into_owned());
                 acc
@@ -47,6 +46,6 @@ impl Connection {
             None => Body::empty(),
         };
 
-        FutureResult::from(self.response_builder.body(body).map_err(|e| Error::from(e)))
+        FutureResult::from(self.response_builder.body(body).map_err(Error::from))
     }
 }
