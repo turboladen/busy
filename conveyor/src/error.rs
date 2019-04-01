@@ -1,5 +1,6 @@
 use failure::{Compat, Fail};
 use hyper::Error as HyperError;
+use http::Error as HttpError;
 
 pub type StdError = Compat<Error>;
 
@@ -7,6 +8,15 @@ pub type StdError = Compat<Error>;
 pub enum Error {
     #[fail(display = "internal hyper error: {}", _0)]
     HyperError(#[cause] HyperError),
+
+    #[fail(display = "internal http error: {}", _0)]
+    HttpError(#[cause] HttpError),
+}
+
+impl From<HttpError> for Error {
+    fn from(http_error: HttpError) -> Self {
+        Error::HttpError(http_error)
+    }
 }
 
 impl From<HyperError> for Error {

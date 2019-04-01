@@ -4,6 +4,8 @@ extern crate log;
 mod application;
 pub mod busy_error;
 mod configuration;
+pub mod controller;
+pub mod router;
 pub mod stations;
 
 pub use application::HyperApplication;

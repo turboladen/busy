@@ -1,32 +1,30 @@
 use busy::{
-    busy_error::StdBusyError, conveyor::connection::Connection, BusyMethod, BusyResponse,
-    HyperApplication, StatusCode,
+    busy_error::StdBusyError,
+    conveyor::connection::Connection, BusyMethod,
+    HyperApplication, router::{Params, Router}, controller::text,
 };
-use futures::{future, Future};
 // This needs to go away
-use hyper::{Body, Response};
+use futures::Future;
+use hyper::Body;
 
 static TEMPLATE: &[u8] = b"<html><body><h1>you did it</h1></body></html>";
 
 struct DummyApp;
 
 impl HyperApplication for DummyApp {
+    type RouteResult = Box<Future<Item = Connection, Error = StdBusyError> + Send>;
+
     fn route(
         connection: Connection,
-    ) -> Box<Future<Item = BusyResponse, Error = StdBusyError> + Send> {
-        let request = connection.request();
-
-        match (request.method(), request.uri().path()) {
-            (&BusyMethod::GET, "/") => Box::new(future::ok(Response::new(TEMPLATE.into()))),
-            // This should be handled by the framework
-            _ => Box::new(future::ok(
-                Response::builder()
-                    .status(StatusCode::NOT_FOUND)
-                    .body(Body::empty())
-                    .unwrap(),
-            )),
-        }
+    ) -> Self::RouteResult {
+        Router::new()
+            .add_route(BusyMethod::GET, "/", home)
+            .route(connection)
     }
+}
+
+fn home(connection: Connection, _params: Option<Params>) -> Box<Future<Item = Connection, Error = StdBusyError> + Send> {
+    text(connection, Body::from(TEMPLATE))
 }
 
 fn main() {
