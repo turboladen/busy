@@ -21,7 +21,7 @@ impl Station for Logger {
     fn operate(self, connection: Connection) -> Connection {
         let request = connection.request();
 
-        debug!("[{} {}]", request.method(), request.uri());
+        debug!("[-> {:?} {} {}]", request.version(), request.method(), request.uri());
 
         connection
     }

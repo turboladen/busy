@@ -5,7 +5,7 @@ use crate::{
 };
 use busy_conveyor::{connection::Connection, station::Station};
 use failure::Fail;
-use futures::Future;
+use futures::{future, Future};
 use hyper::{service::service_fn, Body, Request, Server};
 use lazy_static::lazy_static;
 use std::env;
@@ -44,9 +44,17 @@ pub trait HyperApplication {
                     // completed by calling Builder::body()). Then here we'll finalize the response
                     // body in a Future and hand it back over to hyper.
 
-                    Self::route(connection).and_then(|connection| {
-                        Box::new(connection.close().map_err(|e| BusyError::from(e).compat()))
-                    })
+                    Self::route(connection)
+                        .and_then(|connection| {
+                            future::ok(connection.close())
+                                .and_then(|response| {
+                                    response
+                                        .map_err(|e| BusyError::from(e).compat())
+                                        .inspect(|response| {
+                                            debug!("[<- {:?} {}]", response.version(), response.status())
+                                        })
+                                })
+                        })
                 })
             })
             .map_err(|e| eprintln!("server error: {}", e));
