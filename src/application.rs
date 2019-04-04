@@ -13,6 +13,7 @@ use std::env;
 lazy_static! {
     static ref CONFIG: Configuration =
         Configuration::try_new().expect("Unable to fetch configuration");
+
     static ref LOGGER: Logger = {
         if env::var("RUST_LOG").is_err() {
             env::set_var("RUST_LOG", format!("busy={}", CONFIG.log_level.to_string()));
