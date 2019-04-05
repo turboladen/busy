@@ -2,7 +2,7 @@ use busy::{
     // busy_error::StdBusyError,
     conveyor::connection::Connection,
     router::{EasyRoute, Router},
-    BusyMethod, HyperApplication,
+    HyperApplication,
 };
 use crate::controllers::home;
 
@@ -12,8 +12,10 @@ impl HyperApplication for BlogApp {
     type RouteResult = EasyRoute;
 
     fn route(connection: Connection) -> Self::RouteResult {
-        Router::default()
-            .add_route(BusyMethod::GET, "/", home::index)
-            .route(connection)
+        let mut router = Router::default();
+
+        router.get("/", home::index);
+
+        router.route(connection)
     }
 }

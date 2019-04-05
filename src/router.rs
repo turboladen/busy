@@ -21,9 +21,9 @@ pub struct Router {
 }
 
 impl Router {
-    pub fn add_route<'a>(&'a mut self, method: Method, path: &str, action: Action) -> &'a Self {
+    pub fn get<'a>(&'a mut self, path: &str, action: Action) -> &'a Self {
         let route = Route {
-            method,
+            method: Method::GET,
             action,
             path: path.to_string(),
         };
