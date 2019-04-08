@@ -1,4 +1,4 @@
-use busy_conveyor::{connection::Connection, station::Station};
+use busy_conveyor::{connection::Connection, connect::Connect};
 
 #[derive(Clone, Copy)]
 pub struct Logger;
@@ -17,8 +17,8 @@ impl Default for Logger {
     }
 }
 
-impl Station for Logger {
-    fn operate(self, connection: Connection) -> Connection {
+impl Connect for Logger {
+    fn connect(&self, connection: Connection) -> Connection {
         let request = connection.request();
 
         debug!("[-> {:?} {} {}]", request.version(), request.method(), request.uri());

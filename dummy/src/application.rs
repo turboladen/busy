@@ -1,6 +1,7 @@
 use busy::{
     // busy_error::StdBusyError,
-    conveyor::connection::Connection,
+    application::LOGGER,
+    conveyor::{connection::Connection, connect::Connect},
     router::{EasyRoute, Router},
     HyperApplication,
 };
@@ -17,5 +18,16 @@ impl HyperApplication for BlogApp {
         router.get("/", home::index);
 
         router.route(connection)
+    }
+
+    fn endpoint(connection: Connection) -> Connection {
+        // Static resources
+        // Request ID
+        LOGGER.connect(connection)
+        // Parsers
+        // Method override
+        // Head
+        // Session
+        // Router
     }
 }

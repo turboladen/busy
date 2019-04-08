@@ -3,7 +3,7 @@ use crate::{
     busy_error::{BusyError, StdBusyError},
     configuration::Configuration,
 };
-use busy_conveyor::{connection::Connection, station::Station};
+use busy_conveyor::{connection::Connection, connect::Connect};
 use failure::Fail;
 use futures::{future, Future};
 use hyper::{service::service_fn, Body, Request, Server};
@@ -11,10 +11,10 @@ use lazy_static::lazy_static;
 use std::env;
 
 lazy_static! {
-    static ref CONFIG: Configuration =
+    pub static ref CONFIG: Configuration =
         Configuration::try_new().expect("Unable to fetch configuration");
 
-    static ref LOGGER: Logger = {
+    pub static ref LOGGER: Logger = {
         if env::var("RUST_LOG").is_err() {
             env::set_var("RUST_LOG", format!("busy={}", CONFIG.log_level.to_string()));
         }
@@ -38,7 +38,7 @@ pub trait HyperApplication {
                     let connection = Connection::new(req);
 
                     // pre-routing things. Make synchronous for now.
-                    let connection = LOGGER.operate(connection);
+                    let connection = Self::endpoint(connection);
 
                     // Hand the connection over to the router, where each route must return a
                     // future that contains the not-yet-completed response (since response is
@@ -64,4 +64,6 @@ pub trait HyperApplication {
     }
 
     fn route(connection: Connection) -> Self::RouteResult;
+
+    fn endpoint(connection: Connection) -> Connection;
 }

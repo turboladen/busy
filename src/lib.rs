@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate log;
 
-mod application;
+pub mod application;
 pub mod busy_error;
 mod configuration;
 pub mod controller;
