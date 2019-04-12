@@ -1,7 +1,7 @@
 use busy_conveyor::error::Error as ConveyorError;
 use failure::{Compat, Fail};
-use hyper::Error as HyperError;
 use hyper::http::Error as HttpError;
+use hyper::Error as HyperError;
 
 pub type StdBusyError = Compat<BusyError>;
 

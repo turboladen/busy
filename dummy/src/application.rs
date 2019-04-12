@@ -1,11 +1,10 @@
+use crate::controllers::home;
 use busy::{
     application::REQUEST_LOGGER,
-    conveyor::{Connection, Connect},
-    router::{Router},
-    HyperApplication,
-    BusyError,
+    conveyor::{Connect, Connection},
+    router::Router,
+    BusyError, HyperApplication,
 };
-use crate::controllers::home;
 
 pub(crate) struct BlogApp;
 

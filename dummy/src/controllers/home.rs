@@ -1,9 +1,4 @@
-use busy::{
-    BusyError,
-    controller::text,
-    conveyor::connection::Connection,
-    router::Params,
-};
+use busy::{controller::text, conveyor::connection::Connection, router::Params, BusyError};
 
 // This needs to go away
 use hyper::Body;

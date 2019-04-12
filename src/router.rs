@@ -28,10 +28,7 @@ impl Router {
         self
     }
 
-    pub fn route(
-        &self,
-        connection: Connection,
-    ) -> Result<Connection, BusyError> {
+    pub fn route(&self, connection: Connection) -> Result<Connection, BusyError> {
         let request = connection.request();
 
         for route in &self.routes {

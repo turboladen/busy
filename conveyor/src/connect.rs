@@ -4,5 +4,9 @@ pub trait Connect {
     type Params;
     type Error;
 
-    fn connect(&self, connection: Connection, params: Self::Params) -> Result<Connection, Self::Error>;
+    fn connect(
+        &self,
+        connection: Connection,
+        params: Self::Params,
+    ) -> Result<Connection, Self::Error>;
 }

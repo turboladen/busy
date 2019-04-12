@@ -6,10 +6,7 @@ use hyper::Body;
 //     where B: Into<Body>
 // {
 // }
-pub fn text<B>(
-    connection: Connection,
-    body: B,
-) -> Result<Connection, BusyError>
+pub fn text<B>(connection: Connection, body: B) -> Result<Connection, BusyError>
 where
     B: Into<Body>,
 {

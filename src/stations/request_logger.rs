@@ -1,5 +1,5 @@
-use busy_conveyor::{connection::Connection, connect::Connect};
 use crate::busy_error::BusyError;
+use busy_conveyor::{connect::Connect, connection::Connection};
 
 #[derive(Clone, Copy)]
 pub struct RequestLogger;
@@ -22,10 +22,19 @@ impl Connect for RequestLogger {
     type Error = BusyError;
     type Params = Option<()>;
 
-    fn connect(&self, connection: Connection, _params: Self::Params) -> Result<Connection, Self::Error> {
+    fn connect(
+        &self,
+        connection: Connection,
+        _params: Self::Params,
+    ) -> Result<Connection, Self::Error> {
         let request = connection.request();
 
-        debug!("[-> {:?} {} {}]", request.version(), request.method(), request.uri());
+        debug!(
+            "[-> {:?} {} {}]",
+            request.version(),
+            request.method(),
+            request.uri()
+        );
 
         Ok(connection)
     }

@@ -29,12 +29,10 @@ impl Connection {
 
         let url = Url::parse(&request_uri).ok()?;
 
-        let hash = url
-            .query_pairs()
-            .fold(HashMap::new(), |mut acc, (k, v)| {
-                acc.insert(k.into_owned(), v.into_owned());
-                acc
-            });
+        let hash = url.query_pairs().fold(HashMap::new(), |mut acc, (k, v)| {
+            acc.insert(k.into_owned(), v.into_owned());
+            acc
+        });
 
         Some(hash)
     }
