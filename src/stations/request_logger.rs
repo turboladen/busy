@@ -22,6 +22,7 @@ impl Connect for RequestLogger {
     type Error = BusyError;
     type Params = Option<()>;
 
+    #[inline]
     fn connect(
         &self,
         connection: Connection,

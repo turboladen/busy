@@ -28,6 +28,7 @@ impl Router {
         self
     }
 
+    #[inline]
     pub fn route(&self, connection: Connection) -> Result<Connection, BusyError> {
         let request = connection.request();
 

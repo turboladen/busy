@@ -24,7 +24,7 @@ pub enum LogLevel {
 }
 
 impl fmt::Display for LogLevel {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = match self {
             LogLevel::None => "none",
             LogLevel::Error => "error",
@@ -76,7 +76,7 @@ impl Configuration {
         // You can deserialize (and thus freeze) the entire configuration as
         // c.try_into()
 
-        let config = Configuration {
+        let config = Self {
             host: build_host_addr(&host_ip, host_port),
             log_level,
         };

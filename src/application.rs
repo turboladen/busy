@@ -47,7 +47,7 @@ pub trait HyperApplication {
                     // Hand the connection over to the router.
                     Self::route(connection)
                         .map(|connection| connection.close())
-                        .and_then(|response| response.map_err(|e| BusyError::from(e)))
+                        .and_then(|response| response.map_err(BusyError::from))
                         .and_then(|response| {
                             debug!("[<- {:?} {}]", response.version(), response.status());
                             Ok(response)
@@ -62,8 +62,8 @@ pub trait HyperApplication {
 
     fn endpoint(connection: Connection) -> Result<Connection, BusyError> {
         print_http_version(connection)
-            .and_then(|connection| print_http_version(connection))
-            .and_then(|connection| print_http_version(connection))
+            .and_then(print_http_version)
+            .and_then(print_http_version)
     }
 
     fn route(connection: Connection) -> Result<Connection, BusyError>;
