@@ -15,3 +15,11 @@ pub use hyper::Method as BusyMethod;
 pub use hyper::StatusCode;
 
 pub use busy_conveyor as conveyor;
+
+use conveyor::Connection;
+
+fn print_http_version(connection: Connection) -> Result<Connection, BusyError> {
+    debug!("HTTP Version: {:?}", connection.request().version());
+
+    Ok(connection)
+}
