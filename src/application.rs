@@ -54,9 +54,10 @@ pub trait HyperApplication {
                         .and_then(|response| {
                             response
                                 .map_err(|e| BusyError::from(e))
-                                // .inspect(|response| {
-                                //     debug!("[<- {:?} {}]", response.version(), response.status())
-                                // })
+                        })
+                        .and_then(|response| {
+                            debug!("[<- {:?} {}]", response.version(), response.status());
+                            Ok(response)
                         })
                         .map_err(|e| e.compat())
                 })
