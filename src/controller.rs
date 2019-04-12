@@ -1,6 +1,5 @@
-use crate::busy_error::StdBusyError;
+use crate::busy_error::BusyError;
 use busy_conveyor::connection::Connection;
-use futures::{future, Future};
 use hyper::Body;
 
 // pub fn render<B>(connection: Connection, body: B)
@@ -10,7 +9,7 @@ use hyper::Body;
 pub fn text<B>(
     connection: Connection,
     body: B,
-) -> Box<Future<Item = Connection, Error = StdBusyError> + Send>
+) -> Result<Connection, BusyError>
 where
     B: Into<Body>,
 {
@@ -20,8 +19,8 @@ where
         .response_builder
         .header("Content-Type", "text/plain");
 
-    Box::new(future::ok(Connection {
+    Ok(Connection {
         response_body: Some(body.into()),
         ..temp_connection
-    }))
+    })
 }

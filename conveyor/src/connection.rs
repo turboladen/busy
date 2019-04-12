@@ -1,5 +1,4 @@
 use crate::error::Error;
-use futures::{future::FutureResult, Future};
 use http::response::Builder;
 use hyper::{Body, Request, Response};
 use std::collections::HashMap;
@@ -40,12 +39,12 @@ impl Connection {
         Some(hash)
     }
 
-    pub fn close(mut self) -> impl Future<Item = Response<Body>, Error = Error> {
+    pub fn close(mut self) -> Result<Response<Body>, Error> {
         let body = match self.response_body {
             Some(b) => b,
             None => Body::empty(),
         };
 
-        FutureResult::from(self.response_builder.body(body).map_err(Error::from))
+        self.response_builder.body(body).map_err(Error::from)
     }
 }

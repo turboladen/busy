@@ -1,15 +1,16 @@
 use busy_conveyor::{connection::Connection, connect::Connect};
+use crate::busy_error::BusyError;
 
 #[derive(Clone, Copy)]
-pub struct Logger;
+pub struct RequestLogger;
 
-impl Logger {
+impl RequestLogger {
     pub fn new() -> Self {
         Self::default()
     }
 }
 
-impl Default for Logger {
+impl Default for RequestLogger {
     fn default() -> Self {
         pretty_env_logger::try_init().ok();
 
@@ -17,12 +18,15 @@ impl Default for Logger {
     }
 }
 
-impl Connect for Logger {
-    fn connect(&self, connection: Connection) -> Connection {
+impl Connect for RequestLogger {
+    type Error = BusyError;
+    type Params = Option<()>;
+
+    fn connect(&self, connection: Connection, _params: Self::Params) -> Result<Connection, Self::Error> {
         let request = connection.request();
 
         debug!("[-> {:?} {} {}]", request.version(), request.method(), request.uri());
 
-        connection
+        Ok(connection)
     }
 }

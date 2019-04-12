@@ -1,14 +1,11 @@
-use crate::busy_error::StdBusyError;
+use crate::busy_error::BusyError;
 use busy_conveyor::connection::Connection;
-use futures::{future, Future};
 use hyper::{Method, StatusCode};
 use std::collections::HashMap;
 
-pub type EasyRoute = Box<Future<Item = Connection, Error = StdBusyError> + Send>;
-
 pub type Params = HashMap<String, String>;
 
-pub type Action = fn(Connection, Option<Params>) -> EasyRoute;
+pub type Action = fn(Connection, Option<Params>) -> Result<Connection, BusyError>;
 
 pub struct Route {
     method: Method,
@@ -34,7 +31,7 @@ impl Router {
     pub fn route(
         &self,
         connection: Connection,
-    ) -> EasyRoute {
+    ) -> Result<Connection, BusyError> {
         let request = connection.request();
 
         for route in &self.routes {
@@ -51,7 +48,7 @@ impl Router {
             .response_builder
             .status(StatusCode::NOT_FOUND);
 
-        Box::new(future::ok(Connection { ..temp_connection }))
+        Ok(Connection { ..temp_connection })
     }
 }
 

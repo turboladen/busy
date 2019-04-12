@@ -1,10 +1,10 @@
 use crate::{connection::Connection, error::Error};
 use futures::Future;
+use std::collections::HashMap;
 
 pub trait Connect {
-    fn connect(&self, connection: Connection) -> Connection;
-}
+    type Params;
+    type Error;
 
-pub trait AsyncConnect {
-    fn async_connect(&self, connection: Connection) -> dyn Future<Item = Connection, Error = Error>;
+    fn connect(&self, connection: Connection, params: Self::Params) -> Result<Connection, Self::Error>;
 }

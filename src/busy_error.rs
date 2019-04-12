@@ -1,11 +1,15 @@
 use busy_conveyor::error::Error as ConveyorError;
 use failure::{Compat, Fail};
 use hyper::Error as HyperError;
+use hyper::http::Error as HttpError;
 
 pub type StdBusyError = Compat<BusyError>;
 
 #[derive(Debug, Fail)]
 pub enum BusyError {
+    #[fail(display = "internal http error: {}", _0)]
+    HttpError(#[cause] HttpError),
+
     #[fail(display = "internal hyper error: {}", _0)]
     HyperError(#[cause] HyperError),
 
@@ -22,5 +26,11 @@ impl From<ConveyorError> for BusyError {
 impl From<HyperError> for BusyError {
     fn from(hyper_error: HyperError) -> Self {
         BusyError::HyperError(hyper_error)
+    }
+}
+
+impl From<HttpError> for BusyError {
+    fn from(http_error: HttpError) -> Self {
+        BusyError::HttpError(http_error)
     }
 }

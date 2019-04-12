@@ -1,33 +1,24 @@
 use busy::{
-    // busy_error::StdBusyError,
-    application::LOGGER,
-    conveyor::{connection::Connection, connect::Connect},
-    router::{EasyRoute, Router},
+    application::REQUEST_LOGGER,
+    conveyor::{Connection, Connect},
+    router::{Router},
     HyperApplication,
+    BusyError,
 };
 use crate::controllers::home;
 
 pub(crate) struct BlogApp;
 
 impl HyperApplication for BlogApp {
-    type RouteResult = EasyRoute;
 
-    fn route(connection: Connection) -> Self::RouteResult {
+    fn route(connection: Connection) -> Result<Connection, BusyError> {
         let mut router = Router::default();
 
         router.get("/", home::index);
 
-        router.route(connection)
-    }
-
-    fn endpoint(connection: Connection) -> Connection {
-        // Static resources
-        // Request ID
-        LOGGER.connect(connection)
-        // Parsers
-        // Method override
-        // Head
-        // Session
-        // Router
+        REQUEST_LOGGER.connect(connection, None)
+            .and_then(|connection| {
+                router.route(connection)
+            })
     }
 }
