@@ -37,7 +37,8 @@ pub trait HyperApplication {
                 service_fn(|req: Request<Body>| {
                     let connection = Connection::new(req);
 
-                    let connection = match default_connecting(connection) {
+                    // pre-routing things. Make synchronous for now.
+                    let connection = match Self::endpoint(connection) {
                         Ok(c) => c,
                         Err(_e) => {
                             return Response::builder()
@@ -47,18 +48,15 @@ pub trait HyperApplication {
                         }
                     };
 
-                    // pre-routing things. Make synchronous for now.
-
-                    // Hand the connection over to the router, where each route must return a
-                    // future that contains the not-yet-completed response (since response is
-                    // completed by calling Builder::body()). Then here we'll finalize the response
-                    // body in a Future and hand it back over to hyper.
-
+                    // Hand the connection over to the router.
                     Self::route(connection)
                         .map(|connection| connection.close())
                         .and_then(|response| {
                             response
                                 .map_err(|e| BusyError::from(e))
+                                // .inspect(|response| {
+                                //     debug!("[<- {:?} {}]", response.version(), response.status())
+                                // })
                         })
                         .map_err(|e| e.compat())
                 })
@@ -68,13 +66,11 @@ pub trait HyperApplication {
         hyper::rt::run(server);
     }
 
+    fn endpoint(connection: Connection) -> Result<Connection, BusyError> {
+        print_http_version(connection)
+            .and_then(|connection| print_http_version(connection))
+            .and_then(|connection| print_http_version(connection))
+    }
 
-    fn endpoint(connection: Connection) -> Connection;
     fn route(connection: Connection) -> Result<Connection, BusyError>;
-}
-
-fn default_connecting(connection: Connection) -> Result<Connection, BusyError> {
-    print_http_version(connection)
-        .and_then(|connection| print_http_version(connection))
-        .and_then(|connection| print_http_version(connection))
 }

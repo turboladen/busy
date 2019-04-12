@@ -1,6 +1,4 @@
-use crate::{connection::Connection, error::Error};
-use futures::Future;
-use std::collections::HashMap;
+use crate::connection::Connection;
 
 pub trait Connect {
     type Params;

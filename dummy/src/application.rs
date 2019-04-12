@@ -10,15 +10,15 @@ use crate::controllers::home;
 pub(crate) struct BlogApp;
 
 impl HyperApplication for BlogApp {
+    fn endpoint(connection: Connection) -> Result<Connection, BusyError> {
+        REQUEST_LOGGER.connect(connection, None)
+    }
 
     fn route(connection: Connection) -> Result<Connection, BusyError> {
         let mut router = Router::default();
 
         router.get("/", home::index);
 
-        REQUEST_LOGGER.connect(connection, None)
-            .and_then(|connection| {
-                router.route(connection)
-            })
+        router.route(connection)
     }
 }
