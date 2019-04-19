@@ -1,9 +1,10 @@
 use crate::stations::request_logger::RequestLogger;
 use crate::{busy_error::BusyError, configuration::Configuration};
-use busy_conveyor::connection::Connection;
+use busy_conveyor::connection::{Connection, ConnectionFuture};
 use failure::Fail;
-use futures::Future;
-use hyper::{service::service_fn, Body, Request, Response, Server};
+use futures::{Future};
+// use hyper::{service::service_fn, Body, Request, Response, Server};
+use hyper::{service::service_fn, Body, Request, Server};
 use lazy_static::lazy_static;
 use std::env;
 
@@ -31,28 +32,34 @@ pub trait HyperApplication {
         let server = Server::bind(&CONFIG.host)
             .serve(|| {
                 service_fn(|req: Request<Body>| {
+                    let (parts, body) = req.into_parts();
+
                     let connection = Connection::new(req);
 
-                    // pre-routing things. Make synchronous for now.
-                    let connection = match Self::endpoint(connection) {
-                        Ok(c) => c,
-                        Err(_e) => {
-                            return Response::builder()
-                                .status(406)
-                                .body(Body::empty())
-                                .map_err(|e| BusyError::from(e).compat());
-                        }
-                    };
-
-                    // Hand the connection over to the router.
-                    Self::route(connection)
-                        .map(|connection| connection.close())
-                        .and_then(|response| response.map_err(BusyError::from))
-                        .and_then(|response| {
-                            debug!("[<- {:?} {}]", response.version(), response.status());
-                            Ok(response)
+                    ConnectionFuture::new(|| {
+                        // match Self::endpoint(connection) {
+                        //     Ok(c) => c,
+                        //     Err(_e) => {
+                        //         return Response::builder()
+                        //             .status(406)
+                        //             .body(Body::empty())
+                        //             .map_err(|e| BusyError::from(e).compat());
+                        //     }
+                        // }
+                        Self::endpoint(connection)
+                    })
+                    .and_then(|endpoint_connection| {
+                        ConnectionFuture::new(|| {
+                            Self::route(endpoint_connection)
                         })
-                        .map_err(|e| e.compat())
+                    })
+                    .map(|routed_connection| routed_connection.close())
+                    .and_then(|response| response.map_err(BusyError::from))
+                    .and_then(|response| {
+                        debug!("[<- {:?} {}]", response.version(), response.status());
+                        futures::future::ok(response)
+                    })
+                    .map_err(|e| e.compat())
                 })
             })
             .map_err(|e| eprintln!("server error: {}", e));
