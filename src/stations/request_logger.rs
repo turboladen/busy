@@ -1,4 +1,4 @@
-use crate::busy_error::BusyError;
+use crate::error::Error;
 use busy_conveyor::{connect::Connect, connection::Connection};
 
 #[derive(Clone, Copy)]
@@ -19,7 +19,7 @@ impl Default for RequestLogger {
 }
 
 impl Connect for RequestLogger {
-    type Error = BusyError;
+    type Error = Error;
     type Params = Option<()>;
 
     #[inline]

@@ -1,5 +1,5 @@
 use crate::stations::request_logger::RequestLogger;
-use crate::{busy_error::BusyError, configuration::Configuration};
+use crate::{error::Error, configuration::Configuration};
 use busy_conveyor::connection::{Connection, ConnectionFuture};
 use failure::Fail;
 use futures::{Future};
@@ -43,7 +43,7 @@ pub trait HyperApplication {
                         //         return Response::builder()
                         //             .status(406)
                         //             .body(Body::empty())
-                        //             .map_err(|e| BusyError::from(e).compat());
+                        //             .map_err(|e| Error::from(e).compat());
                         //     }
                         // }
                         Self::endpoint(connection)
@@ -54,7 +54,7 @@ pub trait HyperApplication {
                         })
                     })
                     .map(|routed_connection| routed_connection.close())
-                    .and_then(|response| response.map_err(BusyError::from))
+                    .and_then(|response| response.map_err(Error::from))
                     .and_then(|response| {
                         debug!("[<- {:?} {}]", response.version(), response.status());
                         futures::future::ok(response)
@@ -67,11 +67,11 @@ pub trait HyperApplication {
         hyper::rt::run(server);
     }
 
-    fn endpoint(connection: Connection) -> Result<Connection, BusyError> {
+    fn endpoint(connection: Connection) -> Result<Connection, Error> {
         print_http_version(connection)
             .and_then(print_http_version)
             .and_then(print_http_version)
     }
 
-    fn route(connection: Connection) -> Result<Connection, BusyError>;
+    fn route(connection: Connection) -> Result<Connection, Error>;
 }

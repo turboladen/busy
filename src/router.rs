@@ -1,11 +1,11 @@
-use crate::busy_error::BusyError;
+use crate::error::Error;
 use busy_conveyor::connection::Connection;
 use hyper::{Method, StatusCode};
 use std::collections::HashMap;
 
 pub type Params = HashMap<String, String>;
 
-pub type Action = fn(Connection, Option<Params>) -> Result<Connection, BusyError>;
+pub type Action = fn(Connection, Option<Params>) -> Result<Connection, Error>;
 
 pub struct Route {
     method: Method,
@@ -29,8 +29,8 @@ impl Router {
     }
 
     #[inline]
-    pub fn route(&self, connection: Connection) -> Result<Connection, BusyError> {
         let request = connection.request();
+    pub fn route(&self, connection: Connection) -> Result<Connection, Error> {
 
         for route in &self.routes {
             if (request.method(), request.uri().path()) == (&route.method, &route.path) {

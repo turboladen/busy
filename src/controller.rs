@@ -1,4 +1,4 @@
-use crate::busy_error::BusyError;
+use crate::error::Error;
 use busy_conveyor::connection::Connection;
 use hyper::Body;
 
@@ -6,7 +6,7 @@ use hyper::Body;
 //     where B: Into<Body>
 // {
 // }
-pub fn text<B>(connection: Connection, body: B) -> Result<Connection, BusyError>
+pub fn text<B>(connection: Connection, body: B) -> Result<Connection, Error>
 where
     B: Into<Body>,
 {
