@@ -37,8 +37,8 @@ pub use busy_conveyor as conveyor;
 
 use conveyor::Connection;
 
-    debug!("HTTP Version: {:?}", connection.request().version());
 fn print_http_version(connection: Connection) -> Result<Connection, Error> {
+    debug!("HTTP Version: {:?}", connection.request_parts().version);
 
     Ok(connection)
 }

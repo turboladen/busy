@@ -28,13 +28,13 @@ impl Connect for RequestLogger {
         connection: Connection,
         _params: Self::Params,
     ) -> Result<Connection, Self::Error> {
-        let request = connection.request();
+        let request_parts = connection.request_parts();
 
         debug!(
             "[-> {:?} {} {}]",
-            request.version(),
-            request.method(),
-            request.uri()
+            request_parts.version,
+            request_parts.method,
+            request_parts.uri
         );
 
         Ok(connection)

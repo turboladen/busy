@@ -32,8 +32,6 @@ pub trait HyperApplication {
         let server = Server::bind(&CONFIG.host)
             .serve(|| {
                 service_fn(|req: Request<Body>| {
-                    let (parts, body) = req.into_parts();
-
                     let connection = Connection::new(req);
 
                     ConnectionFuture::new(|| {

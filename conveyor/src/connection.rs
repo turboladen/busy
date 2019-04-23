@@ -16,19 +16,22 @@ pub struct Connection {
 
 impl Connection {
     pub fn new(request: Request<Body>) -> Self {
+        let (parts, body) = request.into_parts();
+
         Self {
-            request,
+            request_parts: parts,
+            request_body: body,
             response_builder: Response::builder(),
             response_body: None,
         }
     }
 
-    pub fn request(&self) -> &Request<Body> {
-        &self.request
+    pub fn request_parts(&self) -> &Parts {
+        &self.request_parts
     }
 
     pub fn query_params(&self) -> Option<HashMap<String, String>> {
-        let request_uri = self.request.uri().to_string();
+        let request_uri = self.request_parts.uri.to_string();
 
         let url = Url::parse(&request_uri).ok()?;
 

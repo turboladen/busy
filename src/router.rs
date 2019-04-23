@@ -29,11 +29,11 @@ impl Router {
     }
 
     #[inline]
-        let request = connection.request();
     pub fn route(&self, connection: Connection) -> Result<Connection, Error> {
+        let request_parts = connection.request_parts();
 
         for route in &self.routes {
-            if (request.method(), request.uri().path()) == (&route.method, &route.path) {
+            if (&request_parts.method, request_parts.uri.path()) == (&route.method, &route.path) {
                 let query_params = connection.query_params();
 
                 return (route.action)(connection, query_params);
