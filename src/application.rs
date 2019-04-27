@@ -1,9 +1,9 @@
 use crate::stations::request_logger::RequestLogger;
-use crate::{error::Error, configuration::Configuration};
+use crate::{configuration::Configuration, error::Error};
 use failure::Fail;
 use futures::{Async, Future, Poll};
-use hyper::{service::service_fn, Body, Request, Response, Server};
 use hyper::http::{request::Parts as RequestParts, response::Builder};
+use hyper::{service::service_fn, Body, Request, Response, Server};
 use lazy_static::lazy_static;
 use std::env;
 
@@ -20,7 +20,8 @@ lazy_static! {
 }
 
 pub trait Application<T>: Accept<T> + Route<T>
-where T: 'static + Send + Sync
+where
+    T: 'static + Send + Sync,
 {
     fn start(&'static self) {
         dbg!(&*CONFIG);
@@ -33,8 +34,7 @@ where T: 'static + Send + Sync
 
                     EndpointConnection::new(Self::accept, Self::route, &mut conn, body);
 
-                    conn.close()
-                        .map_err(|e| e.compat())
+                    conn.close().map_err(|e| e.compat())
                 })
             })
             .map_err(|e| eprintln!("server error: {}", e));
@@ -90,7 +90,8 @@ pub enum EndpointConnectionState {
 
 // This should really be the `Connection`. Leaving as this name until I can prove this out.
 pub struct EndpointConnection<'a, T>
-where T: Send + Sync
+where
+    T: Send + Sync,
 {
     pub conn: &'a mut Conn<T>,
     pub state: EndpointConnectionState,
@@ -99,7 +100,8 @@ where T: Send + Sync
 }
 
 impl<'a, T> EndpointConnection<'a, T>
-where T: Send + Sync
+where
+    T: Send + Sync,
 {
     pub fn new(
         accept_fn: AcceptorFn<T>,
@@ -107,7 +109,6 @@ where T: Send + Sync
         conn: &'a mut Conn<T>,
         body: Body,
     ) -> Self {
-
         Self {
             accept_fn,
             route_fn,
@@ -118,7 +119,8 @@ where T: Send + Sync
 }
 
 impl<'a, T> Future for EndpointConnection<'a, T>
-where T: Send + Sync
+where
+    T: Send + Sync,
 {
     type Item = ();
     type Error = Error;
@@ -131,17 +133,15 @@ where T: Send + Sync
                         Ok(_) => {
                             self.state = EndpointConnectionState::Routing;
                         }
-                        Err(e) => return Err(e)
+                        Err(e) => return Err(e),
                     }
                 }
-                EndpointConnectionState::Routing => {
-                    match (self.route_fn)(&mut self.conn) {
-                        Ok(_) => {
-                            self.state = EndpointConnectionState::Done;
-                        }
-                        Err(e) => return Err(e)
+                EndpointConnectionState::Routing => match (self.route_fn)(&mut self.conn) {
+                    Ok(_) => {
+                        self.state = EndpointConnectionState::Done;
                     }
-                }
+                    Err(e) => return Err(e),
+                },
                 EndpointConnectionState::Done => {
                     return Ok(Async::Ready(()));
                 }

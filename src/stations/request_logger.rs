@@ -32,9 +32,7 @@ impl Connect for RequestLogger {
 
         debug!(
             "[-> {:?} {} {}]",
-            request_parts.version,
-            request_parts.method,
-            request_parts.uri
+            request_parts.version, request_parts.method, request_parts.uri
         );
 
         Ok(connection)

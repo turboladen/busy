@@ -1,7 +1,7 @@
 use crate::error::Error;
+use futures::{self, Async, Future, Poll};
 use http::{request::Parts, response::Builder};
 use hyper::{Body, Request, Response};
-use futures::{self, Future, Poll, Async};
 use std::collections::HashMap;
 use url::Url;
 
@@ -54,28 +54,27 @@ impl Connection {
 }
 
 pub struct ConnectionFuture<F, E>
-    where
-        F: Fn() -> Result<Connection, E>,
-        E: From<Error>
+where
+    F: Fn() -> Result<Connection, E>,
+    E: From<Error>,
 {
-    connector: F
+    connector: F,
 }
 
 impl<F, E> ConnectionFuture<F, E>
-    where
-        F: Fn() -> Result<Connection, E>,
-        E: From<Error>,
+where
+    F: Fn() -> Result<Connection, E>,
+    E: From<Error>,
 {
     pub fn new(connector: F) -> Self {
-        Self {
-            connector,
-        }
+        Self { connector }
     }
 }
 
 impl<F, E> Future for ConnectionFuture<F, E>
-    where F: Fn() -> Result<Connection, E>,
-          E: From<Error>
+where
+    F: Fn() -> Result<Connection, E>,
+    E: From<Error>,
 {
     type Item = Connection;
     type Error = E;
