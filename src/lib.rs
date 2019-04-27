@@ -27,7 +27,7 @@ pub mod error;
 pub mod router;
 pub mod stations;
 
-pub use application::HyperApplication;
+pub use application::Application;
 pub use error::Error;
 
 pub use hyper::Method as BusyMethod;
