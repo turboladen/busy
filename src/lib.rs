@@ -32,6 +32,7 @@ pub use error::Error;
 
 pub use hyper::Method as BusyMethod;
 pub use hyper::StatusCode;
+pub use hyper;
 
 pub use busy_conveyor as conveyor;
 

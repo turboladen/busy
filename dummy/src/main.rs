@@ -1,8 +1,8 @@
 mod application;
 mod controllers;
 
-use busy::HyperApplication;
+use busy::Application;
 
 fn main() {
-    crate::application::BlogApp::start()
+    crate::application::BlogApp.start()
 }
